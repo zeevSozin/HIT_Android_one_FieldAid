@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/login_nav_graph"
+    app:startDestination="@id/fragmentLoginView">
+
+    <fragment
+        android:id="@+id/fragmentLoginView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentLoginView"
+        android:label="FragmentLoginView" >
+        <action
+            android:id="@+id/action_fragmentLoginView_to_fragmentRegisterView"
+            app:destination="@id/fragmentRegisterView" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentRegisterView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentRegisterView"
+        android:label="FragmentRegisterView" />
+</navigation>

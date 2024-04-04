@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">FieldAid</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login">Login</string>
+    <string name="fieldaid">FieldAid</string>
+    <string name="email">Email:</string>
+    <string name="password">Password:</string>
+    <string name="soeemail_company_com">soeEmail@company.com</string>
+    <string name="somepassword">SomePassword</string>
+    <string name="don_t_have_an_account_yet">Don\'t have an account yet?</string>
+    <string name="register">Register</string>
+    <string name="someemail_company_com">SomeEmail@company.com</string>
+    <string name="registe_to_fieldaid">Register to FieldAid</string>
+    <string name="first_name">First Name:</string>
+    <string name="last_name">Last Name:</string>
+    <string name="title">Title:</string>
+    <string name="confirm_password">Confirm password:</string>
+    <string name="FireBase_UserAccount">UserAccount</string>
+    <string name="FireBase_User">User</string>
+    <string name="FireBase_Project">Project</string>
+    <string name="projects">Projects</string>
+    <string name="sites">Sites</string>
+    <string name="jobs">Jobs</string>
+    <string name="home">Home</string>
+    <string name="title_activity_main_view">ActivityMainView</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="add_project">Add Project</string>
+    <string name="project_name">Project name</string>
+    <string name="project_description">Project description</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+</resources>

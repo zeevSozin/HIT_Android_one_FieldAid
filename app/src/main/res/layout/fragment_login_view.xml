@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="hit.androidonecourse.fieldaid.ui.viewmodels.FragmentLoginViewModel" />
+        <import type="android.text.TextUtils"/>
+    </data>
+
+
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.views.fragments.FragmentLoginView">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/gray_background">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:text="@string/login" />
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:rowCount="2"
+            android:columnCount="2">
+            <TextView android:text="@string/email"
+                />
+            <EditText android:id="@+id/editTextLoginEmail"
+                android:inputType="textEmailAddress"
+                android:text="@={viewModel.email}"
+                android:hint="@string/someemail_company_com"
+                />
+            <TextView android:text="@string/password"/>
+            <EditText android:id="@+id/editTextLoginPassword"
+                android:inputType="textPassword"
+                android:text="@={viewModel.password}"
+                android:hint="@string/somepassword"
+                />
+        </GridLayout>
+            <Button android:id="@+id/btnLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:onClick="@{(v)->viewModel.onLoginClicked(v)}"
+                android:enabled="@{!TextUtils.isEmpty(viewModel.email) &amp;&amp; !TextUtils.isEmpty(viewModel.password)}"
+                android:text="@string/login"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/don_t_have_an_account_yet"/>
+            <Button android:id="@+id/navigateToRegister"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/register"
+                android:onClick="@{() -> viewModel.navigateToRegister()}"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>
+</layout>

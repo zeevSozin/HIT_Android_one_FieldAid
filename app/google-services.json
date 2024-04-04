@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "239626049887",
+    "project_id": "hit-android-one-project",
+    "storage_bucket": "hit-android-one-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239626049887:android:f462fb19a37d53e7debeea",
+        "android_client_info": {
+          "package_name": "hit.androidonecourse.fieldaid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2oyLc9aBDfUI8-eBAzoA5WkQ7q3npoLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

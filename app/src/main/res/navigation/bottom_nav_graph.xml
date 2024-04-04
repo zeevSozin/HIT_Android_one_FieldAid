@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_nav_graph"
+    app:startDestination="@id/navigation_home">
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentHomeView"
+        android:label="Home"
+        tools:layout="@layout/fragment_home_view" />
+    <fragment
+        android:id="@+id/navigation_sites"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentSitesView"
+        android:label="Sites"
+        tools:layout="@layout/fragment_sites_view" />
+    <fragment
+        android:id="@+id/navigation_projects"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentProjectsView"
+        android:label="Projects"
+        tools:layout="@layout/fragment_projects_view"/>
+    <fragment
+        android:id="@+id/navigation_jobs"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentJobsView"
+        android:label="Jobs"
+        tools:layout="@layout/fragment_jobs_view" />
+</navigation>
