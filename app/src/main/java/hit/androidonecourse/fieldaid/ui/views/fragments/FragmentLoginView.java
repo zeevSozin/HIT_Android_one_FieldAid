@@ -68,12 +68,16 @@ public class FragmentLoginView extends Fragment {
         Navigation.findNavController(this.getView()).navigate(R.id.action_fragmentLoginView_to_fragmentRegisterView);
 
 
+
     }
 
     public void navigateToMainActivity(){
         Intent intent = new Intent(this.getActivity(), ActivityMainView.class);
         intent.putExtra("userAccountId", viewModel.userAccountId);
         startActivity(intent);
+        if(this.getActivity()!= null){
+            this.getActivity().finish();
+        }
 
     }
 

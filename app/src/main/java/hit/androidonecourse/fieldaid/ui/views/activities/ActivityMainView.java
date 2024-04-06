@@ -12,12 +12,15 @@ import androidx.navigation.ui.NavigationUI;
 
 import hit.androidonecourse.fieldaid.R;
 import hit.androidonecourse.fieldaid.databinding.ActivityMainViewBinding;
+import hit.androidonecourse.fieldaid.domain.models.Site;
 import hit.androidonecourse.fieldaid.ui.viewmodels.ActivityMainViewModel;
 
 public class ActivityMainView extends AppCompatActivity {
 
     private ActivityMainViewBinding binding;
     ActivityMainViewModel viewModel;
+
+    Site selectedSiteItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,10 @@ public class ActivityMainView extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 //        NavigationUI.setupActionBarWithNavController(this, navController);
         NavigationUI.setupWithNavController(binding.navView, navController);
+    }
+
+    public void setSelectedSiteItem(Site currentSite){
+        selectedSiteItem = currentSite;
     }
 
 }

@@ -1,4 +1,4 @@
-package hit.androidonecourse.fieldaid.ui.Handlers;
+package hit.androidonecourse.fieldaid.ui.handlers;
 
 import android.view.View;
 

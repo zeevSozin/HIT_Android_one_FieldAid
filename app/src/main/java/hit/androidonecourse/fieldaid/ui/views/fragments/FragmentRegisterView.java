@@ -58,5 +58,8 @@ public class FragmentRegisterView extends Fragment {
         Intent intent = new Intent(this.getActivity(), ActivityMainView.class);
         intent.putExtra("userAccountId", viewModel.user.getValue().getUserAccountId());
         startActivity(intent);
+        if(this.getActivity()!= null){
+            this.getActivity().finish();
+        }
     }
 }

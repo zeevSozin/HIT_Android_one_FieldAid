@@ -121,17 +121,17 @@ public class FragmentProjectsView extends Fragment {
 
         projects = projectRepo.getCollection();
 
-        projectRepo.getAllObjects(new FirebaseCollectionCallback<MutableLiveData<List<Project>>>() {
-            @Override
-            public void onSuccess(MutableLiveData<List<Project>> result) {
-                projects = result;
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-
-            }
-        });
+//        projectRepo.getAllObjects(new FirebaseCollectionCallback<MutableLiveData<List<Project>>>() {
+//            @Override
+//            public void onSuccess(MutableLiveData<List<Project>> result) {
+//                projects = result;
+//            }
+//
+//            @Override
+//            public void onFailure(Exception e) {
+//
+//            }
+//        });
 
         projectsRecyclerView = view.findViewById(R.id.projects_recyclerView);
         fabAddProject = view.findViewById(R.id.FAB_Projects_add);
