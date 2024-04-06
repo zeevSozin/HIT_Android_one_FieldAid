@@ -1,65 +1,33 @@
 package hit.androidonecourse.fieldaid.data.repositories;
 
-import android.app.Application;
-
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
-import hit.androidonecourse.fieldaid.R;
-import hit.androidonecourse.fieldaid.data.DAO.UserDAO;
 import hit.androidonecourse.fieldaid.domain.models.User;
-import hit.androidonecourse.fieldaid.domain.models.UserAccount;
 
-public class UserRepo  implements UserDAO {
-    private DatabaseReference mDatabaseRef;
-    private MutableLiveData<List<User>> users = new MutableLiveData<>();
+public class UserRepo  extends RepoBase<User> {
 
-    private long maxId = 0;
 
-    public UserRepo(Application application) {
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference().
-                child(application.getApplicationContext().
-                        getString(R.string.FireBase_User));
-        mDatabaseRef.addValueEventListener(new ValueEventListener() {
+    public UserRepo(String collectionName) {
+        super(collectionName);
+        ValueEventListener collectionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    maxId = snapshot.getChildrenCount();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        ValueEventListener usersListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<User> tempUsers = new ArrayList<>();
+                List<User> tempCollection = new ArrayList<>();
                 for (DataSnapshot entry: snapshot.getChildren()) {
-                    tempUsers.add(entry.getValue(User.class));
+                    User obj = entry.getValue(User.class);
+                    tempCollection.add(obj);
                 }
-                users.setValue(tempUsers);
+                collection.setValue(tempCollection);
             }
 
             @Override
@@ -67,9 +35,10 @@ public class UserRepo  implements UserDAO {
 
             }
         };
-        mDatabaseRef.addValueEventListener(usersListener);
+        mDatabaseRef.addValueEventListener(collectionListener);
+        }
 
-    }
+
 
     @Override
     public void insert(User user) {
@@ -77,6 +46,14 @@ public class UserRepo  implements UserDAO {
         user.setId(newId);
         mDatabaseRef.child(String.valueOf(newId)).setValue(user);
 
+    }
+
+    @Override
+    public long insertAndGetId(User object) {
+        long newId = maxId +1;
+        object.setId(newId);
+        mDatabaseRef.child(String.valueOf(newId)).setValue(object);
+        return newId;
     }
 
     @Override
@@ -90,23 +67,7 @@ public class UserRepo  implements UserDAO {
     }
 
     @Override
-    public MutableLiveData<List<User>> getAllUsers() {
-        getAllUsersFirebase(new UserRepoCallback<MutableLiveData<List<User>>>() {
-            @Override
-            public void onSuccess(MutableLiveData<List<User>> result) {
-                users = result;
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-
-            }
-        });
-
-        return users;
-    }
-
-    public void getAllUsersFirebase(UserRepoCallback<MutableLiveData<List<User>>> callback){
+    public void getAllObjects(FirebaseCollectionCallback<MutableLiveData<List<User>>> callback) {
         mDatabaseRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -117,18 +78,18 @@ public class UserRepo  implements UserDAO {
                         User user = entry.getValue(User.class);
                         tempUsers.add(user);
                     }
-                    users.setValue(tempUsers);
-                    callback.onSuccess(users);
+                    collection.setValue(tempUsers);
+                    callback.onSuccess(collection);
                 }
             }
         });
 
     }
-
-    public interface UserRepoCallback<T> {
-        void onSuccess(T result);
-        void onFailure(Exception e);
+    @Override
+    public MutableLiveData<List<User>> getCollection() {
+        return collection;
     }
+
 
 
 

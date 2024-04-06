@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hit.androidonecourse.fieldaid.domain.models.Project;
+import hit.androidonecourse.fieldaid.util.TimeStamp;
 
 public class ProjectRepo extends RepoBase<Project>{
 
@@ -41,9 +42,27 @@ public class ProjectRepo extends RepoBase<Project>{
 
     @Override
     public void insert(Project object) {
+        if(object.getContactIds() == null || object.getContactIds().isEmpty()){
+            List<Long> tempList = new ArrayList<>();
+            tempList.add(0L);
+            object.setContactIds(tempList);
+        }
         long newId = maxId +1;
         object.setId(newId);
         mDatabaseRef.child(String.valueOf(newId)).setValue(object);
+    }
+
+    @Override
+    public long insertAndGetId(Project object) {
+        if(object.getContactIds() == null || object.getContactIds().isEmpty()){
+            List<Long> tempList = new ArrayList<>();
+            tempList.add(0L);
+            object.setContactIds(tempList);
+        }
+        long newId = maxId +1;
+        object.setId(newId);
+        mDatabaseRef.child(String.valueOf(newId)).setValue(object);
+        return newId;
     }
 
     @Override
@@ -54,6 +73,7 @@ public class ProjectRepo extends RepoBase<Project>{
 
     @Override
     public void update(Project object) {
+        object.setUpdateDateTime(TimeStamp.getTimeStamp());
         mDatabaseRef.child(String.valueOf(object.getId())).setValue(object);
 
     }
@@ -77,6 +97,7 @@ public class ProjectRepo extends RepoBase<Project>{
         });
 
     }
+    @Override
 
     public MutableLiveData<List<Project>> getCollection(){
         return this.collection;

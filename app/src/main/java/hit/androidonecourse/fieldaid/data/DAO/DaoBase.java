@@ -8,7 +8,9 @@ import hit.androidonecourse.fieldaid.data.repositories.FirebaseCollectionCallbac
 
 public interface DaoBase<T> {
     void insert(T object);
+    long insertAndGetId(T object);
     void delete(T object);
     void update(T object);
     void getAllObjects(FirebaseCollectionCallback<MutableLiveData<List<T>>> callback);
+    MutableLiveData<List<T>> getCollection();
 }

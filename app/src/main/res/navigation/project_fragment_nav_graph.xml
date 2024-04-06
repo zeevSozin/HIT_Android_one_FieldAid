@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/project_fragment_nav_graph"
+    app:startDestination="@id/fragmentProjectsView">
+
+    <fragment
+        android:id="@+id/fragmentProjectsView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentProjectsView"
+        android:label="fragment_projects_view"
+        tools:layout="@layout/fragment_projects_view" >
+        <action
+            android:id="@+id/action_fragmentProjectsView_to_fragmentEditProjectView"
+            app:destination="@id/fragmentEditProjectView" />
+        <action
+            android:id="@+id/action_fragmentProjectsView_to_fragmentDetailsProjectView"
+            app:destination="@id/fragmentDetailsProjectView"/>
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentEditProjectView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentEditProjectView"
+        android:label="fragment_edit_project_view"
+        tools:layout="@layout/fragment_edit_project_view" >
+        <action
+            android:id="@+id/action_fragmentEditProjectView_to_fragmentProjectsView"
+            app:destination="@id/fragmentProjectsView" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentDetailsProjectView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentDetailsProjectView"
+        android:label="fragment_details_project_view"
+        tools:layout="@layout/fragment_details_project_view" >
+        <action
+            android:id="@+id/action_fragmentDetailsProjectView_to_fragmentProjectsView"
+            app:destination="@id/fragmentProjectsView" />
+        <action
+            android:id="@+id/action_fragmentDetailsProjectView_to_fragmentSitesView2"
+            app:destination="@id/fragmentSitesView2"
+            app:popUpTo="@id/fragmentProjectsView"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentSitesView2"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentSitesView"
+        android:label="fragment_sites_view"
+        tools:layout="@layout/fragment_sites_view" />
+
+    <action android:id="@+id/action_global_fragmentProjectsView" app:destination="@id/fragmentProjectsView"/>
+</navigation>
