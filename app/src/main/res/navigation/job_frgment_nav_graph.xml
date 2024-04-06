@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/job_frgment_nav_graph"
+    app:startDestination="@id/fragmentJobsView">
+
+    <fragment
+        android:id="@+id/fragmentJobsView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentJobsView"
+        android:label="fragment_jobs_view"
+        tools:layout="@layout/fragment_jobs_view" >
+        <action
+            android:id="@+id/action_fragmentJobsView_to_fragmentEditJobView"
+            app:destination="@id/fragmentEditJobView" />
+        <action
+            android:id="@+id/action_fragmentJobsView_to_fragmentTasksView"
+            app:destination="@id/fragmentTasksView" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentEditJobView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentEditJobView"
+        android:label="fragment_edit_job_view"
+        tools:layout="@layout/fragment_edit_job_view" >
+        <action
+            android:id="@+id/action_fragmentEditJobView_to_fragmentJobsView"
+            app:destination="@id/fragmentJobsView" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentTasksView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentTasksView"
+        android:label="fragment_tasks_view"
+        tools:layout="@layout/fragment_tasks_view" >
+        <action
+            android:id="@+id/action_fragmentTasksView_to_fragmentJobsView"
+            app:destination="@id/fragmentJobsView" />
+    </fragment>
+</navigation>

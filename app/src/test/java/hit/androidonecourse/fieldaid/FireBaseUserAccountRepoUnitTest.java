@@ -12,7 +12,7 @@ public class FireBaseUserAccountRepoUnitTest {
     @Test
     public void insertUserAccountToDB(){
         UserAccount userAccount = new UserAccount("testingString","zeev@text.com");
-        UserAccountRepo userAccountRepo = new UserAccountRepo(app);
+        UserAccountRepo userAccountRepo = new UserAccountRepo("UserAccount");
         userAccountRepo.insert(userAccount);
 
     }

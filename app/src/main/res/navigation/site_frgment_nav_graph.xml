@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/site_frgment_nav_graph"
+    app:startDestination="@id/fragmentSitesView">
+
+    <fragment
+        android:id="@+id/fragmentSitesView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentSitesView"
+        android:label="fragment_sites_view"
+        tools:layout="@layout/fragment_sites_view" >
+        <action
+            android:id="@+id/action_fragmentSitesView_to_fragmentEditSiteView"
+            app:destination="@id/fragmentEditSiteView" />
+        <action
+            android:id="@+id/action_fragmentSitesView_to_fragmentDetailsSiteView"
+            app:destination="@id/fragmentDetailsSiteView" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentEditSiteView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentEditSiteView"
+        android:label="FragmentEditSiteView" >
+        <action
+            android:id="@+id/action_fragmentEditSiteView_to_fragmentSitesView"
+            app:destination="@id/fragmentSitesView" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentDetailsSiteView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentDetailsSiteView"
+        android:label="fragment_details_site_view"
+        tools:layout="@layout/fragment_details_site_view" >
+        <action
+            android:id="@+id/action_fragmentDetailsSiteView_to_fragmentSitesView"
+            app:destination="@id/fragmentSitesView" />
+        <action
+            android:id="@+id/action_fragmentDetailsSiteView_to_fragmentJobsView2"
+            app:destination="@id/fragmentJobsView2"
+            app:popUpTo="@id/site_frgment_nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentJobsView2"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentJobsView"
+        android:label="fragment_jobs_view"
+        tools:layout="@layout/fragment_jobs_view" />
+</navigation>

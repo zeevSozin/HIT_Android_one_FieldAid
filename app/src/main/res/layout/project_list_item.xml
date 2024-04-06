@@ -6,6 +6,18 @@
         <variable
             name="project"
             type="hit.androidonecourse.fieldaid.domain.models.Project" />
+        <variable
+            name="handler"
+            type="hit.androidonecourse.fieldaid.ui.handlers.ProjectListItemHandler" />
+        <variable
+            name="listener"
+            type="hit.androidonecourse.fieldaid.ui.adapters.RecyclerViewClickListener" />
+        <variable
+            name="position"
+            type="Integer" />
+        <variable
+            name="isSelected"
+            type="Boolean" />
     </data>
 
 <androidx.cardview.widget.CardView
@@ -13,11 +25,21 @@
     android:layout_height="wrap_content"
     android:background="@color/gray_background"
     app:cardCornerRadius="15dp"
-    android:layout_margin="10dp">
+    android:layout_margin="10dp"
+    android:clickable="true"
+    android:onClick="@{() -> listener.recyclerViewClickListener(position)}"
+    android:focusable="true">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp">
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="test" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -43,13 +65,31 @@
                 android:text="@{project.description}" />
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/imageView"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher"
-            android:contentDescription="test" />
+            android:orientation="vertical">
+
+
+        <ImageButton
+            android:id="@+id/imageBtn_Project_item_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit"
+            android:focusable="@{isSelected}"
+            android:clickable="@{isSelected}"
+            android:onClick="@{handler::onEditButtonClicked}"/>
+            <ImageButton
+                android:id="@+id/imageBtn_Project_detail_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_detailes"
+                android:focusable="@{isSelected}"
+                android:clickable="@{isSelected}"
+                android:onClick="@{handler::onDetailsButtonClicked}"/>
+
+        </LinearLayout>
+
 
 
     </LinearLayout>

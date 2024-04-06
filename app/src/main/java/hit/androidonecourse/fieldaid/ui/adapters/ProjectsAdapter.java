@@ -1,8 +1,12 @@
 package hit.androidonecourse.fieldaid.ui.adapters;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -10,15 +14,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import hit.androidonecourse.fieldaid.BR;
 import hit.androidonecourse.fieldaid.R;
 import hit.androidonecourse.fieldaid.databinding.ProjectListItemBinding;
+import hit.androidonecourse.fieldaid.domain.RepositoryMediator;
 import hit.androidonecourse.fieldaid.domain.models.Project;
+import hit.androidonecourse.fieldaid.ui.handlers.ProjectListItemHandler;
 
-public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder> {
+public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>  {
     private ArrayList<Project> projects;
+    private Context context;
+    private RepositoryMediator repositoryMediator;
+    private RecyclerViewClickListener listener;
 
-    public ProjectsAdapter(ArrayList<Project> projects) {
+
+    public ProjectsAdapter(ArrayList<Project> projects, Context context, RecyclerViewClickListener itemListener) {
         this.projects = projects;
+        this.context = context;
+        listener = itemListener;
+        repositoryMediator = RepositoryMediator.getInstance(context);
     }
 
     @NonNull
@@ -37,9 +51,15 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
     @Override
     public void onBindViewHolder(@NonNull ProjectViewHolder holder, int position) {
         Project currentProject = projects.get(position);
-
         holder.projectListItemBinding.setProject(currentProject);
+        holder.projectListItemBinding.setHandler(new ProjectListItemHandler(context));
+        holder.bind(position);
+        boolean isSelected = repositoryMediator.getCurrentProject() == currentProject;
+        holder.projectListItemBinding.setIsSelected(isSelected);
 
+
+
+//        repositoryMediator.setCurrentProject(currentProject);
     }
 
     @Override
@@ -53,18 +73,34 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
         }
     }
 
+
+
     public void setProjects(ArrayList<Project> projects) {
         this.projects = projects;
 
         notifyDataSetChanged();
     }
 
-    class ProjectViewHolder extends RecyclerView.ViewHolder{
+
+
+
+
+
+
+    class ProjectViewHolder extends RecyclerView.ViewHolder {
         private ProjectListItemBinding projectListItemBinding;
 
         public ProjectViewHolder(@NonNull  ProjectListItemBinding projectListItemBinding) {
             super(projectListItemBinding.getRoot());
             this.projectListItemBinding = projectListItemBinding;
+
         }
+        private void bind(int position){
+            projectListItemBinding.setListener(listener);
+            projectListItemBinding.setPosition(position);
+        }
+
+
+
     }
 }

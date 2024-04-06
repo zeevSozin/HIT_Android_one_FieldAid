@@ -1,7 +1,6 @@
 package hit.androidonecourse.fieldaid.ui.viewmodels;
 
 import android.app.Application;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -9,12 +8,12 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
+import hit.androidonecourse.fieldaid.R;
+import hit.androidonecourse.fieldaid.data.repositories.FirebaseCollectionCallback;
 import hit.androidonecourse.fieldaid.data.repositories.UserAccountRepo;
 import hit.androidonecourse.fieldaid.data.repositories.UserRepo;
 import hit.androidonecourse.fieldaid.domain.models.User;
@@ -32,17 +31,19 @@ public class ActivityMainViewModel extends AndroidViewModel {
     private UserRepo userRepo;
 
     private EventListener UserListListener;
+
+
     public ActivityMainViewModel(@NonNull Application application) {
         super(application);
 
-        userAccountRepo = new UserAccountRepo(application);
-        userRepo =new UserRepo(application);
+        userAccountRepo = new UserAccountRepo(application.getApplicationContext().getString(R.string.FireBase_UserAccount));
+        userRepo =new UserRepo("User");
 
-        userAccounts = userAccountRepo.getAllUserAccounts();
-        users = userRepo.getAllUsers();
+        userAccounts = userAccountRepo.getCollection();
+        users = userRepo.getCollection();
 
 
-        userRepo.getAllUsersFirebase(new UserRepo.UserRepoCallback<MutableLiveData<List<User>>>() {
+        userRepo.getAllObjects(new FirebaseCollectionCallback<MutableLiveData<List<User>>>() {
             @Override
             public void onSuccess(MutableLiveData<List<User>> result) {
                 users = result;
@@ -55,11 +56,6 @@ public class ActivityMainViewModel extends AndroidViewModel {
 
             }
         });
-
-
-
-
-
 
     }
 
