@@ -17,6 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import hit.androidonecourse.fieldaid.R;
 import hit.androidonecourse.fieldaid.data.repositories.UserAccountRepo;
 import hit.androidonecourse.fieldaid.data.repositories.UserRepo;
 import hit.androidonecourse.fieldaid.domain.models.User;
@@ -41,8 +42,8 @@ public class FragmentRegisterViewModel extends AndroidViewModel {
         super(application);
         user.setValue(new User());
         mAuth = FirebaseAuth.getInstance();
-        userAccountRepo = new UserAccountRepo(application);
-        userRepo = new UserRepo(application);
+        userAccountRepo = new UserAccountRepo(application.getApplicationContext().getString(R.string.FireBase_UserAccount));
+        userRepo = new UserRepo(application.getApplicationContext().getString(R.string.FireBase_User));
     }
 
 

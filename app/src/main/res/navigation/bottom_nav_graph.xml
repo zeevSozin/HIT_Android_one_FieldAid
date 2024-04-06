@@ -3,25 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_nav_graph"
-    app:startDestination="@id/navigation_home">
+    app:startDestination="@id/navigation_status">
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentHomeView"
+        android:id="@+id/navigation_status"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentStatusHostView"
         android:label="Home"
-        tools:layout="@layout/fragment_home_view" />
+        tools:layout="@layout/fragment_status_host_view" />
     <fragment
         android:id="@+id/navigation_sites"
-        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentSitesView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentSiteHostView"
         android:label="Sites"
-        tools:layout="@layout/fragment_sites_view" />
+        tools:layout="@layout/fragment_site_host_view" />
     <fragment
         android:id="@+id/navigation_projects"
-        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentProjectsView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentProjectHostView"
         android:label="Projects"
         tools:layout="@layout/fragment_projects_view"/>
     <fragment
         android:id="@+id/navigation_jobs"
-        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentJobsView"
+        android:name="hit.androidonecourse.fieldaid.ui.views.fragments.FragmentJobHostView"
         android:label="Jobs"
-        tools:layout="@layout/fragment_jobs_view" />
+        tools:layout="@layout/fragment_job_host_view" />
+    <action android:id="@+id/action_global_navigation_projects" app:destination="@id/navigation_projects"/>
+    <action android:id="@+id/action_global_navigation_sites" app:destination="@id/navigation_sites"/>
+    <action android:id="@+id/action_global_navigation_status" app:destination="@id/navigation_status"/>
+    <action android:id="@+id/action_global_navigation_jobs" app:destination="@id/navigation_jobs"/>
 </navigation>

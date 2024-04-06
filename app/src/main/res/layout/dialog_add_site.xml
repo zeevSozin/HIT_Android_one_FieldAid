@@ -37,12 +37,12 @@
 
         </LinearLayout>
         <EditText
-            android:id="@+id/dialog_addSite_editText_projectName"
+            android:id="@+id/dialog_addSite_editText_SiteName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/site_name"/>
         <EditText
-            android:id="@+id/dialog_addSite_editText_projectDescription"
+            android:id="@+id/dialog_addSite_editText_SiteDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/site_description"/>

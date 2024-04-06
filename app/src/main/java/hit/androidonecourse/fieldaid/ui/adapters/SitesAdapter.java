@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import hit.androidonecourse.fieldaid.R;
 import hit.androidonecourse.fieldaid.databinding.SiteListItemBinding;
+import hit.androidonecourse.fieldaid.domain.RepositoryMediator;
 import hit.androidonecourse.fieldaid.domain.models.Project;
 import hit.androidonecourse.fieldaid.domain.models.Site;
 import hit.androidonecourse.fieldaid.ui.handlers.SiteListItemHandler;
@@ -24,10 +25,15 @@ public class SitesAdapter extends RecyclerView.Adapter<SitesAdapter.SiteViewHold
 
     private Context context;
 
-    public SitesAdapter(ArrayList<Site> sites, ArrayList<Project> projects, Context context){
+    private RepositoryMediator repositoryMediator;
+    private RecyclerViewClickListener listener;
+
+    public SitesAdapter(ArrayList<Site> sites, ArrayList<Project> projects, Context context,RecyclerViewClickListener itemListener){
         this.siteArrayList = sites;
         this.projectArrayList = projects;
         this.context = context;
+        listener = itemListener;
+        repositoryMediator = RepositoryMediator.getInstance(context);
     }
 
 
@@ -52,8 +58,9 @@ public class SitesAdapter extends RecyclerView.Adapter<SitesAdapter.SiteViewHold
         projectName = sitesProject.isPresent()?  sitesProject.get().getName() : "Not assigned";
         holder.siteListItemBinding.setProjectName(projectName);
         holder.siteListItemBinding.setHandler(new SiteListItemHandler(context));
-
-
+        holder.bind(position);
+        boolean isSelected = repositoryMediator.getCurrentSite() == currrentSite;
+        holder.siteListItemBinding.setIsSelected(isSelected);
     }
 
     @Override
@@ -79,6 +86,11 @@ public class SitesAdapter extends RecyclerView.Adapter<SitesAdapter.SiteViewHold
         public SiteViewHolder(@NonNull SiteListItemBinding siteListItemBinding) {
             super(siteListItemBinding.getRoot());
             this.siteListItemBinding = siteListItemBinding;
+        }
+
+        private void bind(int position){
+            siteListItemBinding.setListener(listener);
+            siteListItemBinding.setPosition(position);
         }
     }
 }

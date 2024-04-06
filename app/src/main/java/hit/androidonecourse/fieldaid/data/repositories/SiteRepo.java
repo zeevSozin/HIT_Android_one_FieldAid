@@ -14,6 +14,7 @@ import java.util.List;
 
 import hit.androidonecourse.fieldaid.domain.models.Project;
 import hit.androidonecourse.fieldaid.domain.models.Site;
+import hit.androidonecourse.fieldaid.util.TimeStamp;
 
 public class SiteRepo extends RepoBase<Site>{
     //TODO: Complete implementation
@@ -40,9 +41,27 @@ public class SiteRepo extends RepoBase<Site>{
 
     @Override
     public void insert(Site object) {
+        if(object.getContactIds() == null || object.getContactIds().isEmpty()){
+            List<Long> tempList = new ArrayList<>();
+            tempList.add(0L);
+            object.setContactIds(tempList);
+        }
         long newId = maxId +1;
         object.setId(newId);
         mDatabaseRef.child(String.valueOf(newId)).setValue(object);
+    }
+
+    @Override
+    public long insertAndGetId(Site object) {
+        if(object.getContactIds() == null || object.getContactIds().isEmpty()){
+            List<Long> tempList = new ArrayList<>();
+            tempList.add(0L);
+            object.setContactIds(tempList);
+        }
+        long newId = maxId +1;
+        object.setId(newId);
+        mDatabaseRef.child(String.valueOf(newId)).setValue(object);
+        return newId;
     }
 
     @Override
@@ -53,6 +72,7 @@ public class SiteRepo extends RepoBase<Site>{
 
     @Override
     public void update(Site object) {
+        object.setUpdateDateTime(TimeStamp.getTimeStamp());
         mDatabaseRef.child(String.valueOf(object.getId())).setValue(object);
 
     }
@@ -76,6 +96,7 @@ public class SiteRepo extends RepoBase<Site>{
         });
 
     }
+    @Override
     public MutableLiveData<List<Site>> getCollection(){
         return this.collection;
     }

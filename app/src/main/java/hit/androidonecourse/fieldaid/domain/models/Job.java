@@ -3,9 +3,8 @@ package hit.androidonecourse.fieldaid.domain.models;
 import java.util.List;
 
 public class Job extends EntityBase{
-    private long projectId;
+    private long siteId;
 
-    private List<Long> siteIds;
     //TODO: Create enum of statuses
     private String status;
     private List<Long> taskIds;
@@ -15,32 +14,25 @@ public class Job extends EntityBase{
     }
 
     public Job(long id, String name, String description, String creationDateTime,
-               String updateDateTime, long projectId, List<Long> siteIds, String status,
+               String updateDateTime, long siteId, String status,
                List<Long> taskIds, String dueDateTime) {
 
         super(id, name, description, creationDateTime, updateDateTime);
-        this.projectId = projectId;
-        this.siteIds = siteIds;
+        this.siteId = siteId;
         this.status = status;
         this.taskIds = taskIds;
         this.dueDateTime = dueDateTime;
     }
 
-    public long getProjectId() {
-        return projectId;
+    public long getSiteId() {
+        return siteId;
     }
 
-    public void setProjectId(long projectId) {
-        this.projectId = projectId;
+    public void setSitetId(long siteId) {
+        this.siteId = siteId;
     }
 
-    public List<Long> getSiteIds() {
-        return siteIds;
-    }
 
-    public void setSiteIds(List<Long> siteIds) {
-        this.siteIds = siteIds;
-    }
 
     public String getStatus() {
         return status;

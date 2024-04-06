@@ -20,40 +20,45 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import hit.androidonecourse.fieldaid.R;
 import hit.androidonecourse.fieldaid.data.repositories.FirebaseCollectionCallback;
 import hit.androidonecourse.fieldaid.data.repositories.ProjectRepo;
 import hit.androidonecourse.fieldaid.data.repositories.SiteRepo;
+import hit.androidonecourse.fieldaid.domain.RepositoryMediator;
+import hit.androidonecourse.fieldaid.domain.models.CustomLatLng;
 import hit.androidonecourse.fieldaid.domain.models.Project;
 import hit.androidonecourse.fieldaid.domain.models.Site;
 import hit.androidonecourse.fieldaid.ui.adapters.ProjectsAdapter;
+import hit.androidonecourse.fieldaid.ui.adapters.RecyclerViewClickListener;
 import hit.androidonecourse.fieldaid.ui.adapters.SitesAdapter;
+import hit.androidonecourse.fieldaid.util.CustomLocationManager;
 import hit.androidonecourse.fieldaid.util.TimeStamp;
 
-public class FragmentSitesView extends Fragment {
-    private MutableLiveData<List<Site>> sitesLiveData;
-    private MutableLiveData<List<Project>> projectsLiveData;
-
+public class FragmentSitesView extends Fragment implements RecyclerViewClickListener {
+    private RepositoryMediator repositoryMediator;
     private ArrayList<Site> siteArrayList = new ArrayList<>();
     private ArrayList<Project> projectArrayList = new ArrayList<>();
-
-    private ProjectRepo projectRepo;
-    private SiteRepo siteRepo;
 
     private RecyclerView sitesRecyclerView;
     private SitesAdapter sitesAdapter;
     private ProjectsAdapter projectsAdapter;
     private FloatingActionButton fabAddSite;
 
+    private boolean isFiltered = false;
+    private Project projectFilter;
+
+    CustomLocationManager customLocationManager;
+
     // Dialog fields
     private Dialog addSiteDialog;
-
     private Spinner spinnerProjects;
     private EditText editTxtSiteName;
     private EditText editTxtSiteDescription;
@@ -63,6 +68,16 @@ public class FragmentSitesView extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("FieldAid", "onCreate: Fragment site creating");
+        repositoryMediator = repositoryMediator.getInstance(this.getContext());
+
+        if(repositoryMediator.getSitesFilterProject() != null){
+            isFiltered = true;
+            projectFilter = repositoryMediator.getSitesFilterProject();
+        }
+
+
+
         addSiteDialog = new Dialog(this.getContext());
         addSiteDialog.setContentView(R.layout.dialog_add_site);
         addSiteDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -70,8 +85,8 @@ public class FragmentSitesView extends Fragment {
         addSiteDialog.setCancelable(true);
 
         spinnerProjects = addSiteDialog.findViewById(R.id.dialog_addSite_spinner);
-        editTxtSiteName = addSiteDialog.findViewById(R.id.dialog_addSite_editText_projectName);
-        editTxtSiteDescription = addSiteDialog.findViewById(R.id.dialog_addSite_editText_projectDescription);
+        editTxtSiteName = addSiteDialog.findViewById(R.id.dialog_addSite_editText_SiteName);
+        editTxtSiteDescription = addSiteDialog.findViewById(R.id.dialog_addSite_editText_SiteDescription);
         btnAddSite = addSiteDialog.findViewById(R.id.dialog_addSite_btn_add);
         btnCancel = addSiteDialog.findViewById(R.id.dialog_addSite_btn_cancel);
 
@@ -101,10 +116,14 @@ public class FragmentSitesView extends Fragment {
             public void onShow(DialogInterface dialog) {
 
                 List<String> projectNames = new ArrayList<>();
-                for (Project p : projectArrayList) {
-                    projectNames.add(p.getName());
+                if(!isFiltered){
+                    for (Project p : projectArrayList) {
+                        projectNames.add(p.getName());
+                    }
                 }
-
+                else {
+                    projectNames.add(projectFilter.getName());
+                }
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                         getContext(),
                         android.R.layout.simple_spinner_dropdown_item,
@@ -122,64 +141,44 @@ public class FragmentSitesView extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d("FieldAid", "onCreateView: Fragment sites creating");
         View view = inflater.inflate(R.layout.fragment_sites_view, container, false);
-        sitesLiveData = new MutableLiveData<>();
-        projectsLiveData = new MutableLiveData<>();
-
-        projectRepo = new ProjectRepo("Project");
-        projectsLiveData = projectRepo.getCollection();
-        siteRepo = new SiteRepo("Site");
-        sitesLiveData = siteRepo.getCollection();
 
         sitesRecyclerView = view.findViewById(R.id.sites_recyclerView);
         fabAddSite = view.findViewById(R.id.FAB_Sites_add);
-
-        siteRepo.getAllObjects(new FirebaseCollectionCallback<MutableLiveData<List<Site>>>() {
-            @Override
-            public void onSuccess(MutableLiveData<List<Site>> result) {
-                sitesLiveData = result;
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d("FragmentSites", "onFailure: get all sites" + e.toString());
-
-            }
-        });
-        projectRepo.getAllObjects(new FirebaseCollectionCallback<MutableLiveData<List<Project>>>() {
-            @Override
-            public void onSuccess(MutableLiveData<List<Project>> result) {
-                projectsLiveData = result;
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.d("FragmentSites", "onFailure: get all projects" + e.toString());
-
-            }
-        });
+        customLocationManager = new CustomLocationManager(this.getContext());
 
         sitesRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         sitesRecyclerView.setHasFixedSize(true);
 
-        sitesLiveData.observe(getViewLifecycleOwner(), sites -> {
+
+
+        repositoryMediator.getSiteLiveData().observe(getViewLifecycleOwner(), sites -> {
             siteArrayList.clear();
-            siteArrayList.addAll(sites);
-            sitesAdapter.notifyDataSetChanged();
+            if(!isFiltered){
+                siteArrayList.addAll(sites);
+            }
+            else {
+                siteArrayList.addAll(sites.stream().filter(s -> s.getProjectId() == projectFilter.getId()).collect(Collectors.toList()));
+
+            }
         });
 
-        projectsLiveData.observe(getViewLifecycleOwner(), projects -> {
+        repositoryMediator.getProjectLiveData().observe(getViewLifecycleOwner(), projects -> {
             projectArrayList.clear();
             projectArrayList.addAll(projects);
-            projectsAdapter.notifyDataSetChanged();
-
         });
 
 
-        sitesAdapter = new SitesAdapter(siteArrayList, projectArrayList, getContext());
+        sitesAdapter = new SitesAdapter(siteArrayList, projectArrayList, getContext(),this);
         sitesRecyclerView.setAdapter(sitesAdapter);
 
-        projectsAdapter = new ProjectsAdapter(projectArrayList);
+        projectsAdapter = new ProjectsAdapter(projectArrayList, getContext(), new RecyclerViewClickListener() {
+            @Override
+            public void recyclerViewClickListener(int position) {
+
+            }
+        });
 
         fabAddSite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,15 +187,25 @@ public class FragmentSitesView extends Fragment {
             }
         });
 
-
-
-
-
         return view;
     }
 
     private void addSite(Long projectId, String name, String description){
-        Site site = new Site(0,name, description, TimeStamp.getTimeStamp(), TimeStamp.getTimeStamp(),projectId,new ArrayList<>(),new HashMap<>());
-        siteRepo.insert(site);
+        CustomLatLng customLatLng = customLocationManager.getCustomLatLngCurrentLocation();
+        Site site = new Site(0,name, description, TimeStamp.getTimeStamp(), TimeStamp.getTimeStamp(),projectId,new ArrayList<>(),customLatLng);
+        repositoryMediator.insertSite(site);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("FieldAid", "onPause: Fragment Sites paused");
+    }
+
+    @Override
+    public void recyclerViewClickListener(int position) {
+        repositoryMediator.setCurrentSite(siteArrayList.get(position));
+        sitesRecyclerView.setAdapter(sitesAdapter);
+        Log.d("FieldAid", "recyclerViewClickListener: Sites the current site is: " + repositoryMediator.getCurrentSite().getName());
     }
 }

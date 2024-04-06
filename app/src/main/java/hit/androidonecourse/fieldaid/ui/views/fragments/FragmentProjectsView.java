@@ -1,5 +1,6 @@
 package hit.androidonecourse.fieldaid.ui.views.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 
@@ -29,23 +30,20 @@ import hit.androidonecourse.fieldaid.R;
 import hit.androidonecourse.fieldaid.data.repositories.FirebaseCollectionCallback;
 import hit.androidonecourse.fieldaid.data.repositories.ProjectRepo;
 import hit.androidonecourse.fieldaid.databinding.FragmentProjectsViewBinding;
+import hit.androidonecourse.fieldaid.domain.RepositoryMediator;
 import hit.androidonecourse.fieldaid.domain.models.Project;
 import hit.androidonecourse.fieldaid.ui.adapters.ProjectsAdapter;
+import hit.androidonecourse.fieldaid.ui.adapters.RecyclerViewClickListener;
 import hit.androidonecourse.fieldaid.ui.viewmodels.FragmentProjectsViewModel;
 import hit.androidonecourse.fieldaid.util.TimeStamp;
 
 
-public class FragmentProjectsView extends Fragment {
-
-    private ProjectRepo projectRepo;
-    private MutableLiveData<List<Project>> projects;
-
+public class FragmentProjectsView extends Fragment implements RecyclerViewClickListener {
+    private RepositoryMediator repositoryMediator;
     private ArrayList<Project> projectArrayList = new ArrayList<>();
-
     private FloatingActionButton fabAddProject;
     private RecyclerView projectsRecyclerView;
     private ProjectsAdapter projectsAdapter;
-
     //dialog
     private Dialog addProjectDialog;
     private EditText editTxtProjectName;
@@ -57,21 +55,7 @@ public class FragmentProjectsView extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        projects = new MutableLiveData<>();
-//        projectRepo = new ProjectRepo(this.getString(R.string.FireBase_Project));
-//
-//        projectRepo.getAllObjects(new FirebaseCollectionCallback<MutableLiveData<List<Project>>>() {
-//            @Override
-//            public void onSuccess(MutableLiveData<List<Project>> result) {
-//                projects = result;
-//            }
-//
-//            @Override
-//            public void onFailure(Exception e) {
-//
-//            }
-//        });
-
+        repositoryMediator = repositoryMediator.getInstance(this.getContext());
 
         addProjectDialog = new Dialog(this.getContext());
         addProjectDialog.setContentView(R.layout.dialog_add_project);
@@ -102,10 +86,6 @@ public class FragmentProjectsView extends Fragment {
             }
         });
 
-
-
-
-
     }
 
 
@@ -116,61 +96,34 @@ public class FragmentProjectsView extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_projects_view, container, false);
 
-
-        projectRepo = new ProjectRepo(this.getString(R.string.FireBase_Project));
-
-        projects = projectRepo.getCollection();
-
-//        projectRepo.getAllObjects(new FirebaseCollectionCallback<MutableLiveData<List<Project>>>() {
-//            @Override
-//            public void onSuccess(MutableLiveData<List<Project>> result) {
-//                projects = result;
-//            }
-//
-//            @Override
-//            public void onFailure(Exception e) {
-//
-//            }
-//        });
-
         projectsRecyclerView = view.findViewById(R.id.projects_recyclerView);
         fabAddProject = view.findViewById(R.id.FAB_Projects_add);
-        fabAddProject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addProjectDialog.show();
-            }
-        });
-
+        fabAddProject.setOnClickListener(v -> addProjectDialog.show());
 
         //RecyclerView
         RecyclerView recyclerView = projectsRecyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setHasFixedSize(true);
-
-        projects.observe(getViewLifecycleOwner(), projects -> {
+        repositoryMediator.getProjectLiveData().observe(getViewLifecycleOwner(), projects -> {
             projectArrayList.clear();
-            Log.d("TAG", "onChanged: " + projects.toString());
-                for (Project p : projects) {
-                    Log.d("FieldAid", "onChanged: " + p.getName());
-                    projectArrayList.add(p);
-
-                }
-                projectsAdapter.notifyDataSetChanged();
-
-
+            projectArrayList.addAll(projects);
         });
 
-        projectsAdapter = new ProjectsAdapter(projectArrayList);
-
+        projectsAdapter = new ProjectsAdapter(projectArrayList, getContext(),this);
         projectsRecyclerView.setAdapter(projectsAdapter);
-
 
         return view;
     }
 
     private void addProject(String name, String description) {
-        Project project = new Project(0,name,description, TimeStamp.getTimeStamp(),TimeStamp.getTimeStamp(),new ArrayList<>());
-        projectRepo.insert(project);
+        Project project = new Project(0,name,description, TimeStamp.getTimeStamp(),TimeStamp.getTimeStamp(),null);
+        repositoryMediator.insertProject(project);
+    }
+
+    @Override
+    public void recyclerViewClickListener(int position) {
+        repositoryMediator.setCurrentProject(projectArrayList.get(position));
+        projectsRecyclerView.setAdapter(projectsAdapter);
+
     }
 }

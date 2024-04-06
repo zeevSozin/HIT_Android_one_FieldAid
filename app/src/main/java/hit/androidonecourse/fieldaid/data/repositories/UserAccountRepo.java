@@ -1,46 +1,38 @@
 package hit.androidonecourse.fieldaid.data.repositories;
 
-import android.app.Application;
-
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import hit.androidonecourse.fieldaid.R;
-import hit.androidonecourse.fieldaid.data.DAO.UserAccountDAO;
 import hit.androidonecourse.fieldaid.domain.models.UserAccount;
 
-public class UserAccountRepo implements UserAccountDAO{
-    private DatabaseReference mDatabaseRef;
-    private LiveData<UserAccount> userAccounts;
+public class UserAccountRepo extends RepoBase<UserAccount>{
 
-    private long maxId = 0;
-
-    public UserAccountRepo(Application application) {
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference().
-                child(application.getApplicationContext().
-                        getString(R.string.FireBase_UserAccount));
-        mDatabaseRef.addValueEventListener(new ValueEventListener() {
+    public UserAccountRepo(String collectionName) {
+        super(collectionName);
+        ValueEventListener collectionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    maxId = snapshot.getChildrenCount();
+                List<UserAccount> tempCollection = new ArrayList<>();
+                for (DataSnapshot entry: snapshot.getChildren()) {
+                    UserAccount obj = entry.getValue(UserAccount.class);
+                    tempCollection.add(obj);
                 }
+                collection.setValue(tempCollection);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+        mDatabaseRef.addValueEventListener(collectionListener);
 
 
     }
@@ -50,7 +42,13 @@ public class UserAccountRepo implements UserAccountDAO{
 
         mDatabaseRef.child(String.valueOf(maxId + 1)).setValue(userAccount);
 
+    }
 
+    @Override
+    public long insertAndGetId(UserAccount object) {
+        long newId = maxId +1;
+        mDatabaseRef.child(String.valueOf(newId)).setValue(object);
+        return newId;
     }
 
     @Override
@@ -64,7 +62,12 @@ public class UserAccountRepo implements UserAccountDAO{
     }
 
     @Override
-    public MutableLiveData<List<UserAccount>> getAllUserAccounts() {
+    public void getAllObjects(FirebaseCollectionCallback<MutableLiveData<List<UserAccount>>> callback) {
+
+    }
+
+    @Override
+    public MutableLiveData<List<UserAccount>> getCollection() {
         return null;
     }
 
