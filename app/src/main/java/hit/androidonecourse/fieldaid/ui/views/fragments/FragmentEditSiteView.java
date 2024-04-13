@@ -79,6 +79,7 @@ public class FragmentEditSiteView extends Fragment{
     private Location location;
     private CustomLatLng sitesLocation;
     private Button buttonSubmit;
+    private ImageButton imageButtonDeleteSite;
 
     // dialog
 
@@ -148,12 +149,13 @@ public class FragmentEditSiteView extends Fragment{
                 .commit();
 
         buttonSubmit = view.findViewById(R.id.btn_Site_edit_submit);
+        imageButtonDeleteSite = view.findViewById(R.id.imageBtn_delete_site_edit_site_fragment);
 
 
-        spinnerProjects.setAdapter(spinnerAdapter);
-        editTextSiteName.setText(currentSite.getName());
-        editTextSiteDescription.setText(currentSite.getDescription());
-
+//        spinnerProjects.setAdapter(spinnerAdapter);
+//        editTextSiteName.setText(currentSite.getName());
+//        editTextSiteDescription.setText(currentSite.getDescription());
+//
 //        contactsEditAdapter = new ContactsEditAdapter(this.getContext(),R.layout.contact_list_item_edit,contacts);
 //        listViewContacts.setAdapter(contactsEditAdapter);
 //        listViewContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -166,7 +168,8 @@ public class FragmentEditSiteView extends Fragment{
         currentLiveSite.observe(this.getViewLifecycleOwner(), new Observer<Site>() {
             @Override
             public void onChanged(Site site) {
-                contacts = repositoryMediator.getContactsByIds(site.getContactIds());
+                List<Long> contactIds = repositoryMediator.getCurrentSite().getContactIds();
+                contacts = repositoryMediator.getContactsByIds(contactIds);
                 contactsEditAdapter = new ContactsEditAdapter(getContext(),R.layout.contact_list_item_edit,contacts);
                 listViewContacts.setAdapter(contactsEditAdapter);
                 listViewContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -181,30 +184,20 @@ public class FragmentEditSiteView extends Fragment{
         });
 
         imageButtonAddContact.setOnClickListener(v -> addContactDialog.show());
-
-
-
-
-
-
-
-
-
-
-
-
-
+        imageButtonDeleteSite.setOnClickListener(v -> deleteSite());
         buttonSubmit.setOnClickListener(v -> saveChanges());
-
-
         return view;
     }
+
+
 
     private void saveChanges() {
         currentSite.setProjectId(projects.get((int)spinnerProjects.getSelectedItemPosition()).getId());
         currentSite.setName(editTextSiteName.getText().toString());
         currentSite.setDescription(editTextSiteDescription.getText().toString());
-        currentSite.setLatLongMapString(repositoryMediator.getSiteUpdateLocation());
+        if(repositoryMediator.getSiteUpdateLocation()!= null){
+            currentSite.setLatLongMapString(repositoryMediator.getSiteUpdateLocation());
+        }
         repositoryMediator.updateSite(currentSite);
 
         navigateToSites();
@@ -217,6 +210,10 @@ public class FragmentEditSiteView extends Fragment{
     private void addContact(String name, String phoneNumber) {
         Contact contact = new Contact(0,name,"", TimeStamp.getTimeStamp(), TimeStamp.getTimeStamp(),phoneNumber);
         repositoryMediator.insertContactToSite(contact, currentSite);
+    }
+    private void deleteSite() {
+        repositoryMediator.deleteSite();
+        navigateToSites();
     }
 
     @Override

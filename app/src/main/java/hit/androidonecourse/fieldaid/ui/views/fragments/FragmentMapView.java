@@ -60,27 +60,7 @@ public class FragmentMapView extends Fragment {
 
         repositoryMediator = RepositoryMediator.getInstance(this.getContext());
         currentSite = repositoryMediator.getCurrentSite();
-//        locationManager = (LocationManager) this.getContext().getSystemService(Context.LOCATION_SERVICE);
-//
-//        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-//
-//            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(getActivity(),
-//                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-//            }
-//            else {
-//                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//                // Initialize the location fields
-//                if (location != null) {
-//
-//                    Log.d("FieldAid", "onCreateView: Cutrrent location is" + location.getLatitude() + " : " + location.getLongitude() );
-//
-//                } else {
-//                    Log.d("FieldAid", "onCreate: Location is not avalible");
-//
-//                }
-//            }
-//        }
+
 
         customLocationManager = repositoryMediator.getCustomLocationManager();
         location = customLocationManager.getCurrentLocation();
@@ -92,16 +72,27 @@ public class FragmentMapView extends Fragment {
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 map = googleMap;
                 LatLng siteLocation = null;
-                if(currentSite!= null){
-                    Log.d("FieldAid", "onMapReady: current site is "+ currentSite.getName() +":" + currentSite.getLatLongMapString());
-                    siteLocation = new LatLng(currentSite.getLatLongMapString().getLat(),currentSite.getLatLongMapString().getLng());
-                    MarkerOptions siteMarker = new MarkerOptions().position(siteLocation);
-                    siteMarker.title(currentSite.getName());
-                    siteMarker.icon(BitmapFromVector(getContext(),R.drawable.ic_site_location));
-                    siteMarker.draggable(true);
-                    map.addMarker(siteMarker);
-
+                MarkerOptions siteMarker = new MarkerOptions();
+                if(currentSite.getLatLongMapString()!= null) {
+                    Log.d("FieldAid", "onMapReady: current site is " + currentSite.getName() + ":" + currentSite.getLatLongMapString());
+                    siteLocation = new LatLng(currentSite.getLatLongMapString().getLat(), currentSite.getLatLongMapString().getLng());
+                    siteMarker.icon(BitmapFromVector(getContext(),R.drawable.ic_coutage_32));
+                } else if (currentSite.getLatLongMapString()== null) {
+                    if(location!= null){
+                        siteLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    }
+                    else {
+                        siteLocation = new LatLng(31.7683, 35.2137);
+                    }
+                    siteMarker.icon(BitmapFromVector(getContext(),R.drawable.ic__not_listed_location_32));
                 }
+                siteMarker.position(siteLocation);
+                siteMarker.title(currentSite.getName());
+
+                siteMarker.draggable(true);
+                map.addMarker(siteMarker);
+
+
 
                 LatLng currentLocation;
                 if(location!=null){
@@ -133,6 +124,12 @@ public class FragmentMapView extends Fragment {
                 googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                     @Override
                     public void onMarkerDrag(@NonNull Marker marker) {
+                        if(!Objects.equals(marker.getTitle(), "your location")){
+                            CustomLatLng customLatLng = new CustomLatLng(marker.getPosition().latitude, marker.getPosition().longitude);
+                            repositoryMediator.setSiteUpdateLocation(customLatLng);
+                        }
+
+                        Log.d("FieldAid", "onMarkerDrag: ");
 
                     }
 
@@ -141,12 +138,14 @@ public class FragmentMapView extends Fragment {
                         if(!Objects.equals(marker.getTitle(), "your location")){
                             CustomLatLng customLatLng = new CustomLatLng(marker.getPosition().latitude, marker.getPosition().longitude);
                             repositoryMediator.setSiteUpdateLocation(customLatLng);
+                            Log.d("FieldAid", "onMarkerDragEnd: update site location " + repositoryMediator.getSiteUpdateLocation().getLat());
                         }
 
                     }
 
                     @Override
                     public void onMarkerDragStart(@NonNull Marker marker) {
+                        Log.d("FieldAid", "onMarkerDragStart: ");
 
                     }
                 });

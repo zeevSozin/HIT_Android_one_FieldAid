@@ -3,6 +3,7 @@ package hit.androidonecourse.fieldaid.ui.views.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,9 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import java.security.cert.PKIXRevocationChecker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import hit.androidonecourse.fieldaid.R;
@@ -72,17 +75,29 @@ public class FragmentStatusView extends Fragment implements RecyclerViewClickLis
 
         repositoryMediator.getProjectLiveData().observe(this.getViewLifecycleOwner(), collection ->{
             projects.clear();
-            projects.addAll(collection);
+            for(Project project: collection){
+                if(!project.isDeleted()){
+                    projects.add(project);
+                }
+            }
         });
 
         repositoryMediator.getSiteLiveData().observe(this.getViewLifecycleOwner(), collection ->{
             sites.clear();
-            sites.addAll(collection);
+            for(Site site: collection){
+                if(!site.isDeleted()){
+                    sites.add(site);
+                }
+            }
         });
 
         repositoryMediator.getJobLiveData().observe(this.getViewLifecycleOwner(), collection ->{
             jobs.clear();
-            jobs.addAll(collection);
+            for (Job job : collection){
+                if(!job.isDeleted()){
+                    jobs.add(job);
+                }
+            }
             jobStatusManager.setJobs(this.jobs);
         });
 
@@ -93,7 +108,6 @@ public class FragmentStatusView extends Fragment implements RecyclerViewClickLis
         });
 
         orderedJobs = jobStatusManager.getOrderedJobs();
-
 
 
         imageButtonFilterAll.setOnClickListener(v ->{
@@ -113,9 +127,14 @@ public class FragmentStatusView extends Fragment implements RecyclerViewClickLis
             statusJobAdapter.setStatusJobs(filterJobs(jobs,"Late"));
         });
 
+        repositoryMediator.getIsAllCollectionsLoaded().observe(getViewLifecycleOwner(), isReady -> {
+            if (isReady) {
+                statusJobAdapter = new StatusJobAdapter(projects,sites, filterJobs(orderedJobs, statusJobFilter),getContext(),this);
+                statusJobRecyclerView.setAdapter(statusJobAdapter);
 
-        statusJobAdapter = new StatusJobAdapter(projects,sites, filterJobs(orderedJobs, statusJobFilter),getContext(),this);
-        statusJobRecyclerView.setAdapter(statusJobAdapter);
+                Log.d("FieldAid", "onCreateView: Status the collection is ready");
+            }
+        });
 
         return view;
     }
@@ -137,6 +156,7 @@ public class FragmentStatusView extends Fragment implements RecyclerViewClickLis
                     break;
             }
         }
+
         return filteredJobs;
     }
 
@@ -146,9 +166,17 @@ public class FragmentStatusView extends Fragment implements RecyclerViewClickLis
         repositoryMediator.setCurrentStatusJob(selectedJob);
         repositoryMediator.setTaskFilterByJob(selectedJob);
         statusJobRecyclerView.setAdapter(statusJobAdapter);
+        Site jobsSite = getSiteFromJob(selectedJob);
+        if(jobsSite != null){
+            repositoryMediator.setCurrentSite(jobsSite);
+        }
         Log.d("FieldAid", "recyclerViewClickListener: Status view current job is: " +
                 repositoryMediator.getCurrentStatusJob().getName());
 
 
+    }
+    private Site getSiteFromJob(Job job){
+        Optional<Site> optionalSite = sites.stream().filter(s -> s.getId() == job.getSiteId()).findFirst();
+        return optionalSite.orElse(null);
     }
 }

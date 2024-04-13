@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
@@ -45,6 +46,7 @@ public class FragmentEditJobView extends Fragment {
     private TimePicker timePicker;
     private Button buttonCancel;
     private Button buttonSubmit;
+    private ImageButton imageButtonDeleteJob;
 
 
     // date
@@ -79,6 +81,7 @@ public class FragmentEditJobView extends Fragment {
         timePicker = view.findViewById(R.id.time_picker_edit_job);
         buttonCancel = view.findViewById(R.id.btn_Job_edit_cancel);
         buttonSubmit = view.findViewById(R.id.btn_Job_edit_submit);
+        imageButtonDeleteJob = view.findViewById(R.id.imageBtn_delete_job_edit_job_fragment);
 
         // spinner
 
@@ -117,10 +120,13 @@ public class FragmentEditJobView extends Fragment {
 
         buttonSubmit.setOnClickListener(v -> submitChanges());
         buttonCancel.setOnClickListener(v -> cancelChanges());
+        imageButtonDeleteJob.setOnClickListener(v -> deleteJob());
 
 
         return view;
     }
+
+
 
     private void cancelChanges() {
         navigateToJobs();
@@ -140,6 +146,12 @@ public class FragmentEditJobView extends Fragment {
             currentJob.setDueDateTime(dueDateString);
             repositoryMediator.updateJob(currentJob);
         }
+        navigateToJobs();
+    }
+
+    private void deleteJob() {
+        repositoryMediator.deleteJob();
+
         navigateToJobs();
     }
     private void navigateToJobs(){

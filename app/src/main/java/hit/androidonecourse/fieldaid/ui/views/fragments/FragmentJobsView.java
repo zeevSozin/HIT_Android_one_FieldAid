@@ -143,7 +143,13 @@ public class FragmentJobsView extends Fragment implements RecyclerViewClickListe
         buttonAddJob.setOnClickListener(v -> {
             if(!editTextJobName.getText().toString().isEmpty()){
                 int siteListItemPos = spinnerSites.getSelectedItemPosition();
-                long selectedSiteId = siteArrayList.get(siteListItemPos).getId();
+                long selectedSiteId = 0;
+                if(isFiltered){
+                    selectedSiteId = siteFilter.getId();
+                }
+                else{
+                    selectedSiteId = siteArrayList.get(siteListItemPos).getId();
+                }
                 calendar.set(dateYear,dateMonth,dateDay,dateHour,dateMinute);
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                 String dueDateString = dateFormat.format(calendar.getTime());
@@ -181,12 +187,16 @@ public class FragmentJobsView extends Fragment implements RecyclerViewClickListe
         repositoryMediator.getJobLiveData().observe(getViewLifecycleOwner(), jobs -> {
             jobArrayList.clear();
             if(!isFiltered){
-                jobArrayList.addAll(jobs);
-                jobsAdapter.setJobs(jobArrayList);
+                for (Job job: jobs) {
+                    if(!job.isDeleted()){
+                        jobArrayList.add(job);
+                    }
+                }
             }
             else{
-                jobArrayList.addAll(jobs.stream().filter(j -> j.getSiteId() == siteFilter.getId()).collect(Collectors.toList()));
+                jobArrayList.addAll(jobs.stream().filter(j -> j.getSiteId() == siteFilter.getId() && !j.isDeleted()).collect(Collectors.toList()));
             }
+            jobsAdapter.setJobs(jobArrayList);
         });
 
         repositoryMediator.getSiteLiveData().observe(getViewLifecycleOwner(), sites -> {
