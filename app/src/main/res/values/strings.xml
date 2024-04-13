@@ -61,4 +61,6 @@
     <string name="status">Status</string>
     <string name="edit_site">Edit Site</string>
     <string name="edit_project">Edit Project</string>
+    <string name="profile_picture">Profile picture</string>
+    <string name="add_photo">add photo</string>
 </resources>

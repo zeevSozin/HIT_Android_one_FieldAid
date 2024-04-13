@@ -1,9 +1,18 @@
 package hit.androidonecourse.fieldaid.ui.views.fragments;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -19,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -44,12 +54,14 @@ public class FragmentProjectsView extends Fragment implements RecyclerViewClickL
     private FloatingActionButton fabAddProject;
     private RecyclerView projectsRecyclerView;
     private ProjectsAdapter projectsAdapter;
+
     //dialog
     private Dialog addProjectDialog;
     private EditText editTxtProjectName;
     private EditText editTxtProjectDescription;
     private Button btnAddProject;
     private Button btnCancel;
+
 
 
     @Override
@@ -68,23 +80,14 @@ public class FragmentProjectsView extends Fragment implements RecyclerViewClickL
         btnAddProject = addProjectDialog.findViewById(R.id.dialog_addProject_btn_add);
         btnCancel = addProjectDialog.findViewById(R.id.dialog_addProject_btn_cancel);
 
-        btnAddProject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!editTxtProjectName.getText().toString().isEmpty()){
-                    addProject(editTxtProjectName.getText().toString(), editTxtProjectDescription.getText().toString());
-                    addProjectDialog.dismiss();
-                }
-
-            }
-
-        });
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnAddProject.setOnClickListener(v -> {
+            if(!editTxtProjectName.getText().toString().isEmpty()){
+                addProject(editTxtProjectName.getText().toString(), editTxtProjectDescription.getText().toString());
                 addProjectDialog.dismiss();
             }
+
         });
+        btnCancel.setOnClickListener(v -> addProjectDialog.dismiss());
 
     }
 
@@ -120,7 +123,7 @@ public class FragmentProjectsView extends Fragment implements RecyclerViewClickL
     }
 
     private void addProject(String name, String description) {
-        Project project = new Project(0,name,description, TimeStamp.getTimeStamp(),TimeStamp.getTimeStamp(),null);
+        Project project = new Project(0,name,description, TimeStamp.getTimeStamp(),TimeStamp.getTimeStamp(),null,"");
         repositoryMediator.insertProject(project);
     }
 

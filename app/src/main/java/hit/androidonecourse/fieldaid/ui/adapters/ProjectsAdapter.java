@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import hit.androidonecourse.fieldaid.BR;
@@ -51,15 +53,16 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
     @Override
     public void onBindViewHolder(@NonNull ProjectViewHolder holder, int position) {
         Project currentProject = projects.get(position);
+        Glide.with(context).load(currentProject.getPictureUri()).
+                error(R.drawable.ic_add_phot).placeholder(R.drawable.ic_add_phot).
+                into(holder.projectListItemBinding.imageView);
+
         holder.projectListItemBinding.setProject(currentProject);
         holder.projectListItemBinding.setHandler(new ProjectListItemHandler(context));
         holder.bind(position);
         boolean isSelected = repositoryMediator.getCurrentProject() == currentProject;
         holder.projectListItemBinding.setIsSelected(isSelected);
 
-
-
-//        repositoryMediator.setCurrentProject(currentProject);
     }
 
     @Override

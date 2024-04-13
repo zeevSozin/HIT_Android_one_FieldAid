@@ -2,10 +2,15 @@ package hit.androidonecourse.fieldaid.ui.handlers;
 
 
 
+import android.app.Activity;
+import android.app.Instrumentation;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 
+import androidx.activity.result.ActivityResultCallerLauncher;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.navigation.Navigation;
 
 import hit.androidonecourse.fieldaid.R;
@@ -16,9 +21,12 @@ public class ProjectListItemHandler {
     private Context context;
     private RepositoryMediator repositoryMediator;
 
+
     public ProjectListItemHandler(Context context ) {
         this.context = context;
         repositoryMediator = RepositoryMediator.getInstance(context);
+
+
 
     }
     public void onEditButtonClicked(View view){
@@ -32,4 +40,6 @@ public class ProjectListItemHandler {
         Log.d("FieldAid", "view is" + view);
         Navigation.findNavController(view).navigate(R.id.action_fragmentProjectsView_to_fragmentDetailsProjectView);
     }
+
+
 }

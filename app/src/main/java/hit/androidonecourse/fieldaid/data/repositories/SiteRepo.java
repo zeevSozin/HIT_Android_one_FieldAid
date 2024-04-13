@@ -17,7 +17,7 @@ import hit.androidonecourse.fieldaid.domain.models.Site;
 import hit.androidonecourse.fieldaid.util.TimeStamp;
 
 public class SiteRepo extends RepoBase<Site>{
-    //TODO: Complete implementation
+
     public SiteRepo(String collectionName) {
         super(collectionName);
         ValueEventListener collectionListener = new ValueEventListener() {

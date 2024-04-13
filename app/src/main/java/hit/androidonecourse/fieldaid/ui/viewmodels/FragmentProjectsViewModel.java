@@ -70,7 +70,7 @@ public class FragmentProjectsViewModel extends AndroidViewModel {
     public void addProject(String name, String Description){
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String timeStamp = dateFormat.format(Calendar.getInstance().getTime());
-        Project projectToAdd = new Project(0, name, Description, timeStamp, timeStamp, new ArrayList<>());
+        Project projectToAdd = new Project(0, name, Description, timeStamp, timeStamp, new ArrayList<>(),"");
         projectRepo.insert(projectToAdd);
 
     }

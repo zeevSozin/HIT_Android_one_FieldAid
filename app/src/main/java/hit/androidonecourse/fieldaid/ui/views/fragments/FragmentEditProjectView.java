@@ -1,13 +1,22 @@
 package hit.androidonecourse.fieldaid.ui.views.fragments;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.navigation.Navigation;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +25,17 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.IOException;
 import java.util.List;
 
 import hit.androidonecourse.fieldaid.R;
@@ -35,6 +53,7 @@ public class FragmentEditProjectView extends Fragment {
     private List<Contact> projectContacts;
 
     private Button buttonSubmit;
+    private Button buttonUploadPhoto;
     private ImageButton imageButtonAddContacts;
     private ListView contactsListView;
 
@@ -42,6 +61,8 @@ public class FragmentEditProjectView extends Fragment {
     private EditText editTextProjectDescription;
     ContactsEditAdapter contactsEditAdapter;
     private ImageButton imageButtonDeleteProject;
+    private ImageView imageViewProjectProfilePicture;
+    private Uri imagePath;
 
     // dialog
     private Dialog addContactDialog;
@@ -100,9 +121,11 @@ public class FragmentEditProjectView extends Fragment {
         //Fragment
 
         buttonSubmit = view.findViewById(R.id.btn_Project_edit_submit);
+        buttonUploadPhoto = view.findViewById(R.id.btn_project_edit_upload_photo);
         imageButtonAddContacts = view.findViewById(R.id.imageBtn_add_contact_project_edit_fragment);
         contactsListView = view.findViewById(R.id.listView_contacts_project_edit_fragment);
         imageButtonDeleteProject = view.findViewById(R.id.imageBtn_delete_project_edit_project_fragment);
+        imageViewProjectProfilePicture = view.findViewById(R.id.imageView_project_profile_picture);
         contactsEditAdapter = new ContactsEditAdapter(this.getContext(),R.layout.contact_list_item_edit, projectContacts);
         contactsListView.setAdapter(contactsEditAdapter);
 
@@ -121,6 +144,8 @@ public class FragmentEditProjectView extends Fragment {
         });
         imageButtonAddContacts.setOnClickListener(v -> addContactDialog.show());
         imageButtonDeleteProject.setOnClickListener(v -> deleteProject());
+        imageViewProjectProfilePicture.setOnClickListener(v -> selectAndUpUoadPicture());
+        buttonUploadPhoto.setOnClickListener(v -> uploadImage());
 
         currentLiveProject.observe(this.getViewLifecycleOwner(), new Observer<Project>() {
             @Override
@@ -144,6 +169,9 @@ public class FragmentEditProjectView extends Fragment {
         return view;
     }
 
+
+
+
     private void deleteProject() {
         repositoryMediator.deleteProject();
         navigateToProjects();
@@ -158,5 +186,62 @@ public class FragmentEditProjectView extends Fragment {
         Navigation.findNavController(this.getView()).navigate(R.id.action_fragmentEditProjectView_to_fragmentProjectsView);
     }
 
+    private void selectAndUpUoadPicture() {
+        Intent photoIntent = new Intent(Intent.ACTION_PICK);
+        photoIntent.setType("image/*");
+        startActivityForResult(photoIntent, 1);
 
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1 && resultCode == RESULT_OK && data!=null){
+            imagePath = data.getData();
+            getImageInImageView();
+        }
+    }
+
+    private void getImageInImageView() {
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(this.getContext().getContentResolver(),imagePath);
+            buttonUploadPhoto.setEnabled(true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        imageViewProjectProfilePicture.setImageBitmap(bitmap);
+    }
+
+    private void uploadImage() {
+        ProgressDialog progressDialog = new ProgressDialog(this.getContext());
+        progressDialog.setTitle("Uploading...");
+        progressDialog.show();
+
+
+
+
+        FirebaseStorage.getInstance().getReference("images/" + currentProject.getId()).putFile(imagePath).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()){
+                    task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if(task.isSuccessful()){
+                                currentProject.setPictureUri(task.getResult().toString());
+                            }
+                        }
+                    });
+                    Toast.makeText(FragmentEditProjectView.this.getContext(), "Image Uploaded!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(FragmentEditProjectView.this.getContext(), task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+                progressDialog.dismiss();
+            }
+        });
+
+    }
 }

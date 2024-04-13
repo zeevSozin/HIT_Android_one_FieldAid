@@ -16,7 +16,7 @@ public class Contact extends EntityBase{
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        //TODO: add dat validation
+
         this.phoneNumber = phoneNumber;
     }
 }

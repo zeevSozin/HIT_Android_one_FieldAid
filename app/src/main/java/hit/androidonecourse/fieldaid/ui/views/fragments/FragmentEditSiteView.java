@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,8 +38,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.security.cert.PKIXRevocationChecker;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import hit.androidonecourse.fieldaid.R;
@@ -50,10 +53,10 @@ import hit.androidonecourse.fieldaid.domain.models.EntityBase;
 import hit.androidonecourse.fieldaid.domain.models.Project;
 import hit.androidonecourse.fieldaid.domain.models.Site;
 import hit.androidonecourse.fieldaid.ui.adapters.ContactsEditAdapter;
-import hit.androidonecourse.fieldaid.ui.adapters.ProjectNamesSpinnerAdapter;
 import hit.androidonecourse.fieldaid.ui.handlers.SiteListItemHandler;
 import hit.androidonecourse.fieldaid.ui.viewmodels.FragmentEditSiteViewModel;
 import hit.androidonecourse.fieldaid.ui.views.activities.ActivityMainView;
+import hit.androidonecourse.fieldaid.util.ListUtil;
 import hit.androidonecourse.fieldaid.util.TimeStamp;
 
 
@@ -62,11 +65,13 @@ public class FragmentEditSiteView extends Fragment{
     private Site currentSite;
     private MutableLiveData<Site> currentLiveSite;
     private List<Project> projects;
+    private List<Project> orderedProjects;
     private List<String> projectNames;
     private List<Contact> contacts;
+    private Project selectedProject;
     private Contact selectedContact;
     private Spinner spinnerProjects;
-    private ProjectNamesSpinnerAdapter spinnerAdapter;
+
     private EditText editTextSiteName;
     private EditText editTextSiteDescription;
     private ImageButton imageButtonAddContact;
@@ -111,7 +116,9 @@ public class FragmentEditSiteView extends Fragment{
         contacts = repositoryMediator.getContactsByIds(currentSite.getContactIds());
         projects = repositoryMediator.getProjectLiveData().getValue();
         projectNames = projects.stream().map(EntityBase::getName).collect(Collectors.toList());
-        spinnerAdapter = new ProjectNamesSpinnerAdapter(this.getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, projectNames);
+        Optional<Project> optionalProject = projects.stream().filter( p -> p.getId() == currentSite.getProjectId()).findFirst();
+        selectedProject = optionalProject.orElse(null);
+
 
         // dialog
         addContactDialog = new Dialog(this.getContext());
@@ -134,7 +141,6 @@ public class FragmentEditSiteView extends Fragment{
 
         btnCancel.setOnClickListener(v -> addContactDialog.dismiss());
 
-
         // fragment
 
         spinnerProjects = view.findViewById(R.id.spinner_site_edit_fragment);
@@ -142,6 +148,7 @@ public class FragmentEditSiteView extends Fragment{
         editTextSiteDescription = view.findViewById(R.id.editText_description_site_edit_fragment);
         imageButtonAddContact = view.findViewById(R.id.imageBtn_add_contact_site_edit_fragment);
         listViewContacts = view.findViewById(R.id.listView_contacts_site_edit_fragment);
+
         mapFragment = new FragmentMapView();
         this.getActivity().getSupportFragmentManager()
                 .beginTransaction()
@@ -151,19 +158,21 @@ public class FragmentEditSiteView extends Fragment{
         buttonSubmit = view.findViewById(R.id.btn_Site_edit_submit);
         imageButtonDeleteSite = view.findViewById(R.id.imageBtn_delete_site_edit_site_fragment);
 
+        editTextSiteName.setText(currentSite.getName());
+        editTextSiteDescription.setText(currentSite.getDescription());
 
-//        spinnerProjects.setAdapter(spinnerAdapter);
-//        editTextSiteName.setText(currentSite.getName());
-//        editTextSiteDescription.setText(currentSite.getDescription());
-//
-//        contactsEditAdapter = new ContactsEditAdapter(this.getContext(),R.layout.contact_list_item_edit,contacts);
-//        listViewContacts.setAdapter(contactsEditAdapter);
-//        listViewContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                repositoryMediator.setCurrentContact(contacts.get(position));
-//            }
-//        });
+
+        //spinner
+        ListUtil<Project> projectListUtil = new ListUtil<>();
+        orderedProjects = projectListUtil.setFirst(projects, selectedProject);
+        List<String> orderedProjectName = orderedProjects.stream().map(EntityBase::getName).collect(Collectors.toList());
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                orderedProjectName
+        );
+        spinnerProjects.setAdapter(spinnerAdapter);
 
         currentLiveSite.observe(this.getViewLifecycleOwner(), new Observer<Site>() {
             @Override
@@ -182,6 +191,7 @@ public class FragmentEditSiteView extends Fragment{
 
             }
         });
+
 
         imageButtonAddContact.setOnClickListener(v -> addContactDialog.show());
         imageButtonDeleteSite.setOnClickListener(v -> deleteSite());

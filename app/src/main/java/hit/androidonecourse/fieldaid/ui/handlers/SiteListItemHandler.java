@@ -26,7 +26,7 @@ public class SiteListItemHandler {
     }
 
     public void onEditButtonClicked(View view){
-        //TODO : open edit site activity
+
         Log.d("FieldAid", "onEditButtonClicked:SiteListItemListener ");
         Navigation.findNavController(view).navigate(R.id.action_fragmentSitesView_to_fragmentEditSiteView);
         Log.d("FieldAid", "onEditButtonClicked:view is " + view.toString());
