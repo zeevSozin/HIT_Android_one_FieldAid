@@ -41,6 +41,7 @@ public class FragmentEditProjectView extends Fragment {
     private EditText editTextProjectName;
     private EditText editTextProjectDescription;
     ContactsEditAdapter contactsEditAdapter;
+    private ImageButton imageButtonDeleteProject;
 
     // dialog
     private Dialog addContactDialog;
@@ -48,6 +49,7 @@ public class FragmentEditProjectView extends Fragment {
     private EditText editTextContactPhoneNumber;
     private Button btnAddContact;
     private Button btnCancel;
+
 
 
 
@@ -84,6 +86,7 @@ public class FragmentEditProjectView extends Fragment {
         btnAddContact = addContactDialog.findViewById(R.id.dialog_addContact_btn_add);
         btnCancel = addContactDialog.findViewById(R.id.dialog_addContact_btn_cancel);
 
+
         btnAddContact.setOnClickListener(v -> {
             if(!editTextContactName.getText().toString().isEmpty() || !editTextContactPhoneNumber.getText().toString().isEmpty()){
                 addContact(editTextContactName.getText().toString(), editTextContactPhoneNumber.getText().toString());
@@ -99,6 +102,7 @@ public class FragmentEditProjectView extends Fragment {
         buttonSubmit = view.findViewById(R.id.btn_Project_edit_submit);
         imageButtonAddContacts = view.findViewById(R.id.imageBtn_add_contact_project_edit_fragment);
         contactsListView = view.findViewById(R.id.listView_contacts_project_edit_fragment);
+        imageButtonDeleteProject = view.findViewById(R.id.imageBtn_delete_project_edit_project_fragment);
         contactsEditAdapter = new ContactsEditAdapter(this.getContext(),R.layout.contact_list_item_edit, projectContacts);
         contactsListView.setAdapter(contactsEditAdapter);
 
@@ -116,6 +120,7 @@ public class FragmentEditProjectView extends Fragment {
             navigateToProjects();
         });
         imageButtonAddContacts.setOnClickListener(v -> addContactDialog.show());
+        imageButtonDeleteProject.setOnClickListener(v -> deleteProject());
 
         currentLiveProject.observe(this.getViewLifecycleOwner(), new Observer<Project>() {
             @Override
@@ -137,6 +142,11 @@ public class FragmentEditProjectView extends Fragment {
         
 
         return view;
+    }
+
+    private void deleteProject() {
+        repositoryMediator.deleteProject();
+        navigateToProjects();
     }
 
     private void addContact(String name, String phoneNumber) {

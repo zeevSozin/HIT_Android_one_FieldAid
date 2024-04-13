@@ -102,6 +102,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="horizontal">
                     <TextView
                         android:layout_width="wrap_content"
@@ -159,7 +160,7 @@
                         android:focusable="@{isSelected}"
                         android:clickable="@{isSelected}"
                         android:onClick="@{handler::onNavigateToSiteClicked}"
-                        android:src="@drawable/ic_location_on"/>
+                        android:src="@drawable/ic_navigation"/>
                 </LinearLayout>
             </LinearLayout>
 

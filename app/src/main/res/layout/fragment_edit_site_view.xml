@@ -16,14 +16,35 @@
         android:layout_margin="10dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView_title_fragment_edit_site"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Edit site"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/textView_title_fragment_edit_job"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="@string/edit_site"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <ImageButton
+                android:id="@+id/imageBtn_delete_site_edit_site_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_weight="1.4"
+                android:src="@drawable/ic_delete"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"

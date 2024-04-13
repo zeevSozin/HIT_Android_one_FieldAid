@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_status"
-        android:icon="@drawable/ic_home"
+        android:icon="@drawable/ic_guage"
         android:title="@string/status" />
     <item
         android:id="@+id/navigation_projects"

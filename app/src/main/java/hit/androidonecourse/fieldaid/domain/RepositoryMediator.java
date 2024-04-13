@@ -195,10 +195,10 @@ public class RepositoryMediator  {
 
     private void checkAllCollectionsAvailability(){
         if(isUserCollectionReady.getValue() &&
-                isContactCollectionReady.getValue() &&
                 isProjectCollectionReady.getValue() &&
                 isSiteCollectionReady.getValue() &&
                 isJobCollectionReady.getValue() &&
+                isContactCollectionReady.getValue() &&
                 isTaskCollectionReady.getValue()){
 
             isAllCollectionsLoaded.setValue(true);
@@ -268,6 +268,11 @@ public class RepositoryMediator  {
         }
     }
 
+    public void deleteProject() {
+        currentProject.setDeleted(true);
+        updateProject(currentProject);
+    }
+
     //Sites
 
     public void insertSite(Site site){
@@ -296,6 +301,11 @@ public class RepositoryMediator  {
         siteRepo.update(currentSite);
     }
 
+    public void deleteSite() {
+        currentSite.setDeleted(true);
+        updateSite(currentSite);
+    }
+
 
 // contacts
     public void setCurrentContact(Contact contact) {
@@ -308,7 +318,7 @@ public class RepositoryMediator  {
 
     public List<Contact> getContactsByIds(List<Long> ids) {
         List<Contact> result = new ArrayList<>();
-        if(!contactLiveData.getValue().isEmpty()){
+        if(!contactLiveData.getValue().isEmpty() && ids != null){
             for (Long id : ids) {
 //                result.add(contactLiveData.getValue().stream().filter(c -> c.getId() == id).findFirst().orElse(null));
                 Contact tempContact =  contactLiveData.getValue().stream().filter(c -> c.getId() == id).findFirst().orElse(null);
@@ -399,6 +409,11 @@ public class RepositoryMediator  {
         jobRepo.insert(job);
     }
 
+    public void deleteJob() {
+        currentJob.setDeleted(true);
+        jobRepo.update(currentJob);
+    }
+
     // Tasks
 
     public Task getCurrentTask() {
@@ -417,6 +432,13 @@ public class RepositoryMediator  {
         long id = taskRepo.insertAndGetId(task);
         currentJob.getTaskIds().add(id);
         jobRepo.update(currentJob);
+    }
+    public void deleteTaskFromJob() {
+        long taskId = currentTask.getId();
+        currentJob.getTaskIds().remove(taskId);
+        updateJob(currentJob);
+        currentTask.setJobId(-1);
+        taskRepo.update(currentTask);
     }
 
 
@@ -456,4 +478,7 @@ public class RepositoryMediator  {
     public String getNavigationOriginToTasks(){
         return this.navigationOriginToTasks;
     }
+
+
+
 }

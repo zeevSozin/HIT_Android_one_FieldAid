@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,6 +38,8 @@ public class FragmentDetailsSiteView extends Fragment {
     private ContactsAdapter contactsAdapter;
 
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +63,7 @@ public class FragmentDetailsSiteView extends Fragment {
         buttonBack = view.findViewById(R.id.btn_Site_detail_back);
         buttonJobs = view.findViewById(R.id.btn_Site_detail_navToJobs);
 
+
         textViewProjectName.setText(currentProject != null? currentProject.getName(): "Undefined");
         textViewSiteName.setText(currenrSite.getName());
         textViewSiteDescription.setText(currenrSite.getDescription());
@@ -77,6 +81,7 @@ public class FragmentDetailsSiteView extends Fragment {
         buttonBack.setOnClickListener(v -> navigateToSites());
 
         buttonJobs.setOnClickListener(v -> navigateToJobs());
+
 
         return view;
     }

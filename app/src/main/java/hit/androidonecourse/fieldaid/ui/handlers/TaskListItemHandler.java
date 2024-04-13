@@ -11,5 +11,6 @@ public class TaskListItemHandler extends ListItemHandlerBase{
 
     public void onButtonCompleteTaskClicked(View view){
         Log.d("FieldAid", "onButtonCompleteTaskClicked: task ticked");
+        repositoryMediator.deleteTaskFromJob();
     }
 }

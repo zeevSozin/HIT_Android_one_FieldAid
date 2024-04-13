@@ -5,10 +5,11 @@ import java.util.List;
 public class Job extends EntityBase{
     private long siteId;
 
-    //TODO: Create enum of statuses
+
     private String status;
     private List<Long> taskIds;
     private String dueDateTime;
+
 
     public Job() {
     }

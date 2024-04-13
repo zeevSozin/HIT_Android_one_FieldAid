@@ -19,6 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import hit.androidonecourse.fieldaid.R;
@@ -128,6 +129,17 @@ public class FragmentTasksView extends Fragment implements RecyclerViewClickList
             taskArrayList.addAll(filteredTaskList);
             tasksAdapter.setTasks(taskArrayList);
         });
+//        repositoryMediator.getJobLiveData().observe(getViewLifecycleOwner(), jobs ->{
+//            Optional<Job> updatedJob = jobs.stream().filter(j -> j.getId() == jobFilter.getId()).findFirst();
+//            if(updatedJob.isPresent()){
+//                long jobId = updatedJob.get().getId();
+//                ArrayList<Task> currentTasks = taskArrayList;
+//                List<Task> filteredTaskList = currentTasks.stream().filter(t -> t.getJobId() == jobId).collect(Collectors.toList());
+//                taskArrayList.clear();
+//                taskArrayList.addAll(filteredTaskList);
+//                tasksAdapter.setTasks(taskArrayList);
+//            }
+//        });
 
         tasksAdapter = new TasksAdapter(taskArrayList, getContext(), this);
         tasksRecyclerView.setAdapter(tasksAdapter);

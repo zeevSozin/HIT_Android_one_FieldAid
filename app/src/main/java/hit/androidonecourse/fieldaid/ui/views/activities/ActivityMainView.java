@@ -63,6 +63,7 @@ public class ActivityMainView extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.fragmentContainerViewMain);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 //        NavigationUI.setupActionBarWithNavController(this, navController);
+
         NavigationUI.setupWithNavController(binding.navView, navController);
 
 //       navView.setOnItemSelectedListener(menuItem -> {
@@ -75,6 +76,8 @@ public class ActivityMainView extends AppCompatActivity {
 //           }
 //           return NavigationUI.onNavDestinationSelected(menuItem, navController);
 //       });
+
+
     }
 
 }

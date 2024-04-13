@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_location_on"
+            android:src="@drawable/ic_navigation"
             android:clickable="@{isSelected}"
             android:focusable="@{isSelected}"
             android:onClick="@{handler::onLocationButtonClicked}"/>

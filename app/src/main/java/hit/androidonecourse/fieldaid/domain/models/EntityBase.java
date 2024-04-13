@@ -6,6 +6,7 @@ public class EntityBase {
     private String description;
     private String creationDateTime;
     private String updateDateTime;
+    private boolean isDeleted;
 
     public EntityBase() {
     }
@@ -16,6 +17,7 @@ public class EntityBase {
         this.description = description;
         this.creationDateTime = creationDateTime;
         this.updateDateTime = updateDateTime;
+        this.isDeleted = false;
     }
 
     public long getId() {
@@ -56,5 +58,12 @@ public class EntityBase {
 
     public void setUpdateDateTime(String updateDateTime) {
         this.updateDateTime = updateDateTime;
+    }
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

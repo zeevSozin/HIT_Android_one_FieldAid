@@ -106,7 +106,11 @@ public class FragmentProjectsView extends Fragment implements RecyclerViewClickL
         recyclerView.setHasFixedSize(true);
         repositoryMediator.getProjectLiveData().observe(getViewLifecycleOwner(), projects -> {
             projectArrayList.clear();
-            projectArrayList.addAll(projects);
+            for (Project project: projects){
+                if(!project.isDeleted()){
+                    projectArrayList.add(project);
+                }
+            }
         });
 
         projectsAdapter = new ProjectsAdapter(projectArrayList, getContext(),this);

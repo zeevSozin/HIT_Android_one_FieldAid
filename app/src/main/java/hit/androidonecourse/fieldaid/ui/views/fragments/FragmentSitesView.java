@@ -95,7 +95,13 @@ public class FragmentSitesView extends Fragment implements RecyclerViewClickList
             public void onClick(View v) {
                 if(!editTxtSiteName.getText().toString().isEmpty()){
                     int projectListItemPos = spinnerProjects.getSelectedItemPosition();
-                    long selectedProjectId = projectArrayList.get(projectListItemPos).getId();
+                    long selectedProjectId = 0;
+                    if(isFiltered){
+                        selectedProjectId = projectFilter.getId();
+                    }
+                    else{
+                        selectedProjectId = projectArrayList.get(projectListItemPos).getId();
+                    }
                     addSite(selectedProjectId, editTxtSiteName.getText().toString(), editTxtSiteDescription.getText().toString());
                     addSiteDialog.dismiss();
                 }
@@ -156,11 +162,14 @@ public class FragmentSitesView extends Fragment implements RecyclerViewClickList
         repositoryMediator.getSiteLiveData().observe(getViewLifecycleOwner(), sites -> {
             siteArrayList.clear();
             if(!isFiltered){
-                siteArrayList.addAll(sites);
+                for(Site site: sites){
+                    if(!site.isDeleted()){
+                        siteArrayList.add(site);
+                    }
+                }
             }
             else {
-                siteArrayList.addAll(sites.stream().filter(s -> s.getProjectId() == projectFilter.getId()).collect(Collectors.toList()));
-
+                siteArrayList.addAll(sites.stream().filter(s -> s.getProjectId() == projectFilter.getId() && !s.isDeleted()).collect(Collectors.toList()));
             }
         });
 
