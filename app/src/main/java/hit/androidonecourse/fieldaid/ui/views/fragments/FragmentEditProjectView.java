@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -135,7 +136,11 @@ public class FragmentEditProjectView extends Fragment {
         editTextProjectName.setText(currentProject.getName());
 
         editTextProjectDescription.setText(currentProject.getDescription());
-        
+
+        Glide.with(this).load(currentProject.getPictureUri()).
+                error(R.drawable.ic_add_phot).placeholder(R.drawable.ic_add_phot).
+                into(imageViewProjectProfilePicture);
+
         buttonSubmit.setOnClickListener(v -> {
             currentProject.setName(editTextProjectName.getText().toString());
             currentProject.setDescription(editTextProjectDescription.getText().toString());
@@ -218,8 +223,6 @@ public class FragmentEditProjectView extends Fragment {
         ProgressDialog progressDialog = new ProgressDialog(this.getContext());
         progressDialog.setTitle("Uploading...");
         progressDialog.show();
-
-
 
 
         FirebaseStorage.getInstance().getReference("images/" + currentProject.getId()).putFile(imagePath).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
