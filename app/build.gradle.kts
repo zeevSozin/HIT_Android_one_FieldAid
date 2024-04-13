@@ -45,6 +45,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.3.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
     // ViewModel
     val lifecycle_version = "2.7.0"
